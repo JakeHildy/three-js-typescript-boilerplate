@@ -2,10 +2,6 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/addons/libs/stats.module.js";
-import { GUI } from "dat.gui";
-
-// Tutorial Docs:
-// https://sbcode.net/threejs/stats-panel-module/
 
 const scene = new THREE.Scene();
 
@@ -17,7 +13,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 1.5;
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -25,9 +21,15 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  // renderer.render(scene, camera);
 });
 
 new OrbitControls(camera, renderer.domElement);
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.addEventListener("change", () => {
+//   renderer.render(scene, camera);
+// });
+
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshNormalMaterial({ wireframe: true });
 
@@ -37,23 +39,22 @@ scene.add(cube);
 const stats = new Stats();
 document.body.appendChild(stats.dom);
 
-const gui = new GUI();
-const cubeFolder = gui.addFolder("Cube");
-cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2);
-cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2);
-
-const cameraFolder = gui.addFolder("Camera");
-cameraFolder.add(camera.position, "z", 0, 20);
+const clock = new THREE.Clock();
+let delta;
 
 function animate() {
   requestAnimationFrame(animate);
 
-  // cube.rotation.x += 0.01;
-  // cube.rotation.y += 0.01;
+  delta = clock.getDelta();
+
+  cube.rotation.x += 0.4 * delta;
+  cube.rotation.y += 0.4 * delta;
 
   renderer.render(scene, camera);
+
   stats.update();
 }
 
 animate();
+
+// renderer.render(scene, camera);
