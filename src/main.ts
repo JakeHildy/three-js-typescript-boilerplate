@@ -52,7 +52,7 @@ controls.enableDamping = true;
 
 const material = new THREE.MeshStandardMaterial();
 material.map = new THREE.TextureLoader().load(image);
-//material.map.colorSpace = THREE.SRGBColorSpace
+material.map.colorSpace = THREE.SRGBColorSpace;
 
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), material);
 plane.rotation.x = -Math.PI / 2;
