@@ -7,7 +7,7 @@ import Stats from "three/addons/libs/stats.module.js";
 
 const scene = new THREE.Scene();
 
-new RGBELoader().load("img/venice_sunset_1k.hdr", (texture) => {
+await new RGBELoader().loadAsync("img/venice_sunset_1k.hdr").then((texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   scene.environment = texture;
   scene.background = texture;
@@ -37,28 +37,79 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.y = 0.75;
 controls.enableDamping = true;
 
-const loader = new GLTFLoader();
-loader.load("models/suv_body.glb", (gltf) => {
-  scene.add(gltf.scene);
-});
-// loader.load('models/suv_wheel.glb', (gltf) => {
-//   gltf.scene.position.set(-0.65, 0.2, -0.77)
-//   scene.add(gltf.scene)
-// })
-// loader.load('models/suv_wheel.glb', (gltf) => {
-//   gltf.scene.position.set(0.65, 0.2, -0.77)
-//   gltf.scene.rotateY(Math.PI)
-//   scene.add(gltf.scene)
-// })
-// loader.load('models/suv_wheel.glb', (gltf) => {
-//   gltf.scene.position.set(-0.65, 0.2, 0.57)
-//   scene.add(gltf.scene)
-// })
-// loader.load('models/suv_wheel.glb', (gltf) => {
-//   gltf.scene.position.set(0.65, 0.2, 0.57)
-//   gltf.scene.rotateY(Math.PI)
-//   scene.add(gltf.scene)
-// })
+// const loader = new GLTFLoader();
+// loader.load("models/suv_body.glb", (gltf) => {
+//   const suvBody = gltf.scene;
+//   loader.load("models/suv_wheel.glb", (gltf) => {
+//     const wheels = [
+//       gltf.scene,
+//       gltf.scene.clone(),
+//       gltf.scene.clone(),
+//       gltf.scene.clone(),
+//     ];
+//     wheels[0].position.set(-0.65, 0.2, -0.77);
+//     wheels[1].position.set(0.65, 0.2, -0.77);
+//     wheels[1].rotateY(Math.PI);
+//     wheels[2].position.set(-0.65, 0.2, 0.57);
+//     wheels[3].position.set(0.65, 0.2, 0.57);
+//     wheels[3].rotateY(Math.PI);
+//     suvBody.add(...wheels);
+//   });
+//   scene.add(suvBody);
+// });
+
+// ==============================
+// loading async:
+// const loader = new GLTFLoader();
+// let suvBody: THREE.Object3D;
+// await loader.loadAsync("models/suv_body.glb").then((gltf) => {
+//   suvBody = gltf.scene;
+// });
+// await loader.loadAsync("models/suv_wheel.glb").then((gltf) => {
+//   const wheels = [
+//     gltf.scene,
+//     gltf.scene.clone(),
+//     gltf.scene.clone(),
+//     gltf.scene.clone(),
+//   ];
+//   wheels[0].position.set(-0.65, 0.2, -0.77);
+//   wheels[1].position.set(0.65, 0.2, -0.77);
+//   wheels[1].rotateY(Math.PI);
+//   wheels[2].position.set(-0.65, 0.2, 0.57);
+//   wheels[3].position.set(0.65, 0.2, 0.57);
+//   wheels[3].rotateY(Math.PI);
+//   suvBody.add(...wheels);
+//   scene.add(suvBody);
+// });
+
+// ==============================
+// Function
+async function loadCar() {
+  const loader = new GLTFLoader();
+  const [...model] = await Promise.all([
+    loader.loadAsync("models/suv_body.glb"),
+    loader.loadAsync("models/suv_wheel.glb"),
+  ]);
+
+  const suvBody = model[0].scene;
+  const wheels = [
+    model[1].scene,
+    model[1].scene.clone(),
+    model[1].scene.clone(),
+    model[1].scene.clone(),
+  ];
+
+  wheels[0].position.set(-0.65, 0.2, -0.77);
+  wheels[1].position.set(0.65, 0.2, -0.77);
+  wheels[1].rotateY(Math.PI);
+  wheels[2].position.set(-0.65, 0.2, 0.57);
+  wheels[3].position.set(0.65, 0.2, 0.57);
+  wheels[3].rotateY(Math.PI);
+  suvBody.add(...wheels);
+
+  scene.add(suvBody);
+}
+await loadCar();
 
 const stats = new Stats();
 document.body.appendChild(stats.dom);
