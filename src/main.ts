@@ -47,9 +47,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 const textureLoader = new THREE.TextureLoader();
-const textureFlare0 = textureLoader.load(
-  "https://cdn.jsdelivr.net/gh/Sean-Bradley/First-Car-Shooter@main/dist/client/img/lensflare0.png"
-);
+const textureFlare0 = textureLoader.load("/img/lensflare0.png");
 
 const lensflare = new Lensflare();
 lensflare.addElement(new LensflareElement(textureFlare0, 1000, 0));
