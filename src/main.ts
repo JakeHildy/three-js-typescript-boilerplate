@@ -4,7 +4,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 import Stats from "three/addons/libs/stats.module.js";
-//import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js'
+import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
 
 const scene = new THREE.Scene();
 
@@ -31,8 +31,8 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(1.5, 0.75, 2);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-// renderer.toneMapping = THREE.ACESFilmicToneMapping;
-// renderer.toneMappingExposure = 0.1;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.1;
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -46,12 +46,14 @@ window.addEventListener("resize", () => {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-// const textureLoader = new THREE.TextureLoader()
-// const textureFlare0 = textureLoader.load('https://cdn.jsdelivr.net/gh/Sean-Bradley/First-Car-Shooter@main/dist/client/img/lensflare0.png')
+const textureLoader = new THREE.TextureLoader();
+const textureFlare0 = textureLoader.load(
+  "https://cdn.jsdelivr.net/gh/Sean-Bradley/First-Car-Shooter@main/dist/client/img/lensflare0.png"
+);
 
-// const lensflare = new Lensflare()
-// lensflare.addElement(new LensflareElement(textureFlare0, 1000, 0))
-// light.add(lensflare)
+const lensflare = new Lensflare();
+lensflare.addElement(new LensflareElement(textureFlare0, 1000, 0));
+light.add(lensflare);
 
 new GLTFLoader().load("models/suzanne_scene.glb", (gltf) => {
   console.log(gltf);
